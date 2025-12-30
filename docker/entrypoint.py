@@ -42,17 +42,16 @@ def main():
     result = subprocess.run(["python", "scripts/run_ingestion.py"], capture_output=False)
     
     if result.returncode != 0:
-        print("Ingestion failed! Check logs.")
-        # Decide if we want to crash or continue. 
-        # For now, let's continue so the app can start even if ingestion has issues,
-        # but in production you might want to stop.
+        print("Ingestion failed! Check logs.")        
     else:
         print("Ingestion pipeline finished successfully.")
 
     # 4. Start Streamlit
     print("Starting Streamlit App...")
     # Exec replaces the current process with the new process
-    os.execvp("streamlit", ["streamlit", "run", "app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"])
+    env = os.environ.copy()
+    env["PYTHONPATH"] = f"/code:{env.get('PYTHONPATH', '')}"
+    os.execvpe("streamlit", ["streamlit", "run", "app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"], env)
 
 if __name__ == "__main__":
     main()

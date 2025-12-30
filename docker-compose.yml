@@ -1,3 +1,4 @@
+# classroom-project-rag-poc\docker-compose.yml
 version: '3.9'
 
 services:
@@ -9,18 +10,18 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-rag_db}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   chromadb:
-    image: chromadb/chroma:latest
+    image: chromadb/chroma:0.4.24
     restart: always
     environment:
       - IS_PERSISTENT=TRUE
     ports:
-      - "${CHROMADB_PORT:-8000}:8000"
+      - "8005:8000"
     volumes:
       - chroma_data:/chroma/chroma
 
@@ -31,7 +32,7 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - ./:/app
+    - ./:/code
     env_file:
       - .env
     environment:

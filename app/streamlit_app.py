@@ -26,37 +26,27 @@ if prompt := st.chat_input("Ask a question about the provider manual..."):
     add_message("user", prompt)
     with st.chat_message("user"):
         st.markdown(prompt)
-
-    # Assistant message
+        
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
-        full_response = ""
-        
-        # Get pipeline from state
+
         pipeline = st.session_state.pipeline
-        
-        # Run query
+
         try:
-            stream, sources = pipeline.run(prompt, stream=True)
-            
-            # Stream response
-            for chunk in stream:
-                if chunk.choices[0].delta.content:
-                    full_response += chunk.choices[0].delta.content
-                    message_placeholder.markdown(full_response + "▌")
-            
-            message_placeholder.markdown(full_response)
-            
+            answer, sources = pipeline.run(prompt, stream=False)
+
+            message_placeholder.markdown(answer)
+
             # Show sources
             if sources:
                 with st.expander("View Request Sources"):
                     for i, doc in enumerate(sources):
-                        st.markdown(f"**Source {i+1} (Page {doc['metadata'].get('page')})**")
-                        st.text(doc['content'])
-            
-            # Save response
-            add_message("assistant", full_response)
-            
+                        st.markdown(
+                            f"**Source {i+1} (Page {doc['metadata'].get('page')})**"
+                        )
+                        st.text(doc["content"])
+
+            add_message("assistant", answer)
+
         except Exception as e:
             st.error(f"An error occurred: {e}")
-

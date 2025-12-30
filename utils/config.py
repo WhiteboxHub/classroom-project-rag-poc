@@ -8,9 +8,16 @@ load_dotenv()
 class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "gpt-4o")
+
+    GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+    # Local Embeddings - Using multilingual model for better cross-lingual support
+    # Options: "paraphrase-multilingual-mpnet-base-v2" (recommended), "multilingual-e5-base", "all-MiniLM-L6-v2"
+    EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "paraphrase-multilingual-mpnet-base-v2")
     
-    # Local Embeddings
-    EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
+    # Language settings for multilingual RAG
+    DEFAULT_LANGUAGE = os.getenv("DEFAULT_LANGUAGE", "en")  # Default language fallback
+    ENABLE_LANGUAGE_FILTERING = os.getenv("ENABLE_LANGUAGE_FILTERING", "false").lower() == "true"  # Enable language-based filtering in retrieval
     
     # ChromaDB
     CHROMADB_HOST = os.getenv("CHROMADB_HOST", "chromadb")

@@ -41,8 +41,8 @@ if prompt := st.chat_input("Ask a question about the provider manual..."):
             
             # Stream response
             for chunk in stream:
-                if chunk.choices[0].delta.content:
-                    full_response += chunk.choices[0].delta.content
+                if chunk.content:
+                    full_response += chunk.content
                     message_placeholder.markdown(full_response + "▌")
             
             message_placeholder.markdown(full_response)
@@ -51,8 +51,9 @@ if prompt := st.chat_input("Ask a question about the provider manual..."):
             if sources:
                 with st.expander("View Request Sources"):
                     for i, doc in enumerate(sources):
-                        st.markdown(f"**Source {i+1} (Page {doc['metadata'].get('page')})**")
-                        st.text(doc['content'])
+                        page_num = doc['metadata'].get('page', 'N/A')
+                        st.markdown(f"**Source {i+1} (Page {page_num})**")
+                        st.text(doc['content'][:500] + "..." if len(doc['content']) > 500 else doc['content'])
             
             # Save response
             add_message("assistant", full_response)

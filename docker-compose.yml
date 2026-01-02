@@ -31,13 +31,12 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - ./:/app
+      - ./data:/app/data:ro
+      - ./prompts:/app/prompts:ro
     env_file:
-      - .env
+      - docker.env
     environment:
       - PYTHONUNBUFFERED=1
-      - POSTGRES_HOST=postgres
-      - CHROMADB_HOST=chromadb
     depends_on:
       - postgres
       - chromadb

@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /code
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
-
 COPY . .
 
 EXPOSE 8501

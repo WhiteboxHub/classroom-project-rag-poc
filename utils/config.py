@@ -17,8 +17,8 @@ class Config:
     CHROMADB_PORT = int(os.getenv("CHROMADB_PORT", 8000))
     COLLECTION_NAME = "rag_collection"
     
-    CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))
-    CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 200))
+    CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 800))
+    CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 150))
     
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     

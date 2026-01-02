@@ -1,3 +1,7 @@
+
+from langchain.chains.retrieval import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+
 from langchain_core.prompts import ChatPromptTemplate
 from utils.chromadb_client import get_vectorstore
 from utils.llm import get_llm
@@ -15,11 +19,24 @@ class QueryPipeline:
     def run(self, query: str, stream: bool = False):
         logger.info(f"Processing query: {query}")
         
-        # 1. Setup Retriever
-        retriever = self.vectorstore.as_retriever()
-        
-        # 2. Get Context
-        context_docs = retriever.invoke(query)
+
+        # Guard against vague / meaningless queries
+        if len(query.strip().split()) < 3:
+            return (
+                "Please ask a more specific question related to the provider manual.",
+                []
+            )
+
+        # 1. Setup Retriever       
+        retriever = self.vectorstore.as_retriever(
+            search_type="mmr",
+            search_kwargs={"k": 10, "fetch_k": 30}          
+        )
+
+        # 2. Setup Chain
+        # We will use the system prompt content but convert to LangChain Template
+        system_prompt_text = self.prompt_pipeline.get_system_prompt()
+
         
         # 3. Setup Prompt
         system_prompt_text = self.prompt_pipeline.get_system_prompt()

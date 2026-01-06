@@ -208,3 +208,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Project specific
+chroma_db_data/
+chat_history.db
+docker.env
+output.txt

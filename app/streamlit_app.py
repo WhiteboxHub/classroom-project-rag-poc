@@ -33,20 +33,30 @@ if prompt := st.chat_input("Ask a question about the provider manual..."):
         pipeline = st.session_state.pipeline
 
         try:
-            answer, sources = pipeline.run(prompt, stream=False)
+            stream, sources = pipeline.run(prompt, stream=True)
+            
+            # Stream response
+            for chunk in stream:
+                if chunk.content:
+                    full_response += chunk.content
+                    message_placeholder.markdown(full_response + "▌")
+            
+            message_placeholder.markdown(full_response)
+            
 
-            message_placeholder.markdown(answer)
 
             # Show sources
             if sources:
                 with st.expander("View Request Sources"):
                     for i, doc in enumerate(sources):
-                        st.markdown(
-                            f"**Source {i+1} (Page {doc['metadata'].get('page')})**"
-                        )
-                        st.text(doc["content"])
 
-            add_message("assistant", answer)
+                        page_num = doc['metadata'].get('page', 'N/A')
+                        st.markdown(f"**Source {i+1} (Page {page_num})**")
+                        st.text(doc['content'][:500] + "..." if len(doc['content']) > 500 else doc['content'])
+            
+            # Save response
+            add_message("assistant", full_response)
+           
 
         except Exception as e:
             st.error(f"An error occurred: {e}")

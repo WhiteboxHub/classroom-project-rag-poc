@@ -42,6 +42,7 @@ services:
 
       - ./data:/app/data:ro
       - ./prompts:/app/prompts:ro
+      - .:/app
     env_file:
       - docker.env
     environment:

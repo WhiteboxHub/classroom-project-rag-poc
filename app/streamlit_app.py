@@ -1,12 +1,16 @@
-import streamlit as st
-from app.state import init_state, add_message, get_messages
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import streamlit as st
+from state import init_state, add_message, get_messages
+# ========
 st.set_page_config(page_title="RAG POC", layout="wide")
 
 # Initialize State
 init_state()
 
-st.title("📚 Provider Manual RAG Chat")
+st.title(" Provider Manual RAG Chat")
 
 # Sidebar for controls
 with st.sidebar:

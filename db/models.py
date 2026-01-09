@@ -79,6 +79,7 @@ class ChatDatabase:
         finally:
             conn.close()
 
+
     def add_message(self, session_id: str, role: str, content: str):
         conn = get_db_connection()
         try:
@@ -92,6 +93,7 @@ class ChatDatabase:
             raise e
         finally:
             conn.close()
+            
 
     def get_messages(self, session_id: str) -> List[Dict[str, str]]:
         conn = get_db_connection()

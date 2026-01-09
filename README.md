@@ -52,7 +52,7 @@ A Retrieval-Augmented Generation (RAG) system that processes a healthcare provid
 
 3. Start the application:
    ```bash
-   streamlit run app/streamlit_app.py
+   python -m streamlit run app/streamlit_app.py
    ```
 
 4. Open your browser to `http://localhost:8501`

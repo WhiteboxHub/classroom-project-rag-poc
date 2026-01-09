@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from pipelines.query_pipeline import QueryPipeline
+from app.pipelines.query_pipeline import QueryPipeline
 
 class TestQueryPipelineIntegration(unittest.TestCase):
     @patch('pipelines.query_pipeline.create_stuff_documents_chain')

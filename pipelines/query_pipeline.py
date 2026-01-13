@@ -32,6 +32,11 @@ class QueryPipeline:
             search_type="mmr",
             search_kwargs={"k": 10, "fetch_k": 30}          
         )
+        context_docs = retriever.get_relevant_documents(query)
+        if not context_docs:
+            return (
+                "I don't have enough information to answer that question based on the provider manual.",
+                [])
 
         # 2. Setup Chain
         # We will use the system prompt content but convert to LangChain Template

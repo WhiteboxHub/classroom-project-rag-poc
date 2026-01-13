@@ -39,6 +39,8 @@ if prompt := st.chat_input("Ask a question about the provider manual..."):
         try:
             stream, sources = pipeline.run(prompt, stream=True)
             
+            full_response = ""
+            
             # Stream response
             for chunk in stream:
                 if chunk.content:

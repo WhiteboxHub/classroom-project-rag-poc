@@ -17,3 +17,4 @@ langchain-openai>=0.0.8
 langchain-chroma>=0.1.0
 langchain-huggingface>=0.0.1
 langchain-text-splitters
+langchain-groq

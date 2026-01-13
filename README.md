@@ -31,70 +31,70 @@ A Retrieval-Augmented Generation (RAG) system that processes a healthcare provid
    pip install -r requirements.txt
    ```
 
-3. Set up environment variables(create .env file in the root directory):
-   ```bash
-# ===============================
-# App Mode
-# ===============================
-USE_LOCAL_DB=true
-
-# ===============================
-# LLM Provider (Free Mode)
-# ===============================
-LLM_PROVIDER=openai
-
-# ===============================
-# OpenAI Configuration
-# ===============================
-OPENAI_API_KEY=your-api-key
-OPENAI_MODEL_NAME=gpt-4o
-
-# ===============================
-# Alternative LLM Provider (Groq)
-# Uncomment to use
-# ===============================
-# LLM_PROVIDER=groq
-# GROQ_API_KEY=your-groq-api-key
-# GROQ_MODEL_NAME=meta-llama/llama-4-scout-17b-16e-instruct
-
-# ===============================
-# Embeddings (Free & Local)
-# ===============================
-EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
-
-# ===============================
-# ChromaDB (Local Persistent)
-# ===============================
-CHROMADB_HOST=localhost
-CHROMADB_PORT=8000
-COLLECTION_NAME=rag_collection
-
-# ===============================
-# Chunking Configuration
-# ===============================
-CHUNK_SIZE=800
-CHUNK_OVERLAP=150
-
-# ===============================
-# Logging
-# ===============================
-LOG_LEVEL=INFO
-
-# ===============================
-# Database (Local PostgreSQL)
-# ===============================
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=rag_db
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-
-# ===============================
-# AWS (Optional – Not Used Currently)
-# ===============================
-# AWS_ACCESS_KEY_ID=
-# AWS_SECRET_ACCESS_KEY=
-# AWS_REGION=us-east-1
+3. Set up environment variables (create `.env` file in the root directory):
+   ```env
+   # ===============================
+   # App Mode
+   # ===============================
+   USE_LOCAL_DB=true
+   
+   # ===============================
+   # LLM Provider (Free Mode)
+   # ===============================
+   LLM_PROVIDER=openai
+   
+   # ===============================
+   # OpenAI Configuration
+   # ===============================
+   OPENAI_API_KEY=your-api-key
+   OPENAI_MODEL_NAME=gpt-4o
+   
+   # ===============================
+   # Alternative LLM Provider (Groq)
+   # Uncomment to use
+   # ===============================
+   # LLM_PROVIDER=groq
+   # GROQ_API_KEY=your-groq-api-key
+   # GROQ_MODEL_NAME=meta-llama/llama-4-scout-17b-16e-instruct
+   
+   # ===============================
+   # Embeddings (Free & Local)
+   # ===============================
+   EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
+   
+   # ===============================
+   # ChromaDB (Local Persistent)
+   # ===============================
+   CHROMADB_HOST=localhost
+   CHROMADB_PORT=8000
+   COLLECTION_NAME=rag_collection
+   
+   # ===============================
+   # Chunking Configuration
+   # ===============================
+   CHUNK_SIZE=800
+   CHUNK_OVERLAP=150
+   
+   # ===============================
+   # Logging
+   # ===============================
+   LOG_LEVEL=INFO
+   
+   # ===============================
+   # Database (Local PostgreSQL)
+   # ===============================
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   POSTGRES_DB=rag_db
+   POSTGRES_HOST=localhost
+   POSTGRES_PORT=5432
+   
+   # ===============================
+   # AWS (Optional – Not Used Currently)
+   # ===============================
+   # AWS_ACCESS_KEY_ID=
+   # AWS_SECRET_ACCESS_KEY=
+   # AWS_REGION=us-east-1
    ```
 
 ## Usage

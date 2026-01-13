@@ -6,6 +6,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
+    LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")
+    
+    # Groq
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+    GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", "meta-llama/llama-4-scout-17b-16e-instruct")
+    
+    # OpenAI
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "gpt-4o")
     
@@ -17,8 +24,8 @@ class Config:
     CHROMADB_PORT = int(os.getenv("CHROMADB_PORT", 8000))
     COLLECTION_NAME = "rag_collection"
     
-    CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))
-    CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 200))
+    CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 800))
+    CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 150))
     
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     

@@ -1,5 +1,7 @@
-from langchain.chains import create_retrieval_chain
+
+from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
+
 from langchain_core.prompts import ChatPromptTemplate
 from utils.chromadb_client import get_vectorstore
 from utils.llm import get_llm
@@ -17,38 +19,54 @@ class QueryPipeline:
     def run(self, query: str, stream: bool = False):
         logger.info(f"Processing query: {query}")
         
-        # 1. Setup Retriever
-        retriever = self.vectorstore.as_retriever()
-        
+
+        # Guard against vague / meaningless queries
+        if len(query.strip().split()) < 3:
+            return (
+                "Please ask a more specific question related to the provider manual.",
+                []
+            )
+
+        # 1. Setup Retriever       
+        retriever = self.vectorstore.as_retriever(
+            search_type="mmr",
+            search_kwargs={"k": 10, "fetch_k": 30}          
+        )
+        context_docs = retriever.get_relevant_documents(query)
+        if not context_docs:
+            return (
+                "I don't have enough information to answer that question based on the provider manual.",
+                [])
+
         # 2. Setup Chain
         # We will use the system prompt content but convert to LangChain Template
         system_prompt_text = self.prompt_pipeline.get_system_prompt()
+
         
+        # 3. Setup Prompt
+        system_prompt_text = self.prompt_pipeline.get_system_prompt()
         prompt = ChatPromptTemplate.from_messages([
             ("system", system_prompt_text),
             ("system", "Context: {context}"),
             ("user", "{input}")
         ])
         
-        document_chain = create_stuff_documents_chain(self.llm, prompt)
-        retrieval_chain = create_retrieval_chain(retriever, document_chain)
-        
-        # 3. Invoke
-        # Response contains 'answer' and 'context'
-        if stream:
-             logger.warning("Streaming not strictly implemented in this simple chain wrapper yet, returning full response")
-        
-        response = retrieval_chain.invoke({"input": query})
-        
-        answer = response["answer"]
-        context_docs = response["context"]
-        
-        # Format sources to match previous contract somewhat
+        # 4. Format sources
         formatted_sources = []
         for doc in context_docs:
             formatted_sources.append({
                 "content": doc.page_content,
                 "metadata": doc.metadata
             })
-            
-        return answer, formatted_sources
+
+        # Format context for both streaming and non-streaming
+        context_text = "\n\n".join([doc.page_content for doc in context_docs])
+        messages = prompt.format_messages(context=context_text, input=query)
+
+        if stream:
+            # For streaming
+            return self.llm.stream(messages), formatted_sources
+        else:
+            # For non-streaming
+            answer = self.llm.invoke(messages)
+            return answer.content, formatted_sources

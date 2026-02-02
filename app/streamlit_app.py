@@ -37,6 +37,7 @@ if prompt := st.chat_input("Ask a question about the provider manual..."):
         pipeline = st.session_state.pipeline
 
         try:
+            full_response = ""  # Initialize the response variable
             stream, sources = pipeline.run(prompt, stream=True)
             
             # Stream response

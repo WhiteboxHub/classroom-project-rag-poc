@@ -18,7 +18,6 @@ class QueryPipeline:
 
     def run(self, query: str, stream: bool = False):
         logger.info(f"Processing query: {query}")
-        
 
         # Guard against vague / meaningless queries
         if len(query.strip().split()) < 3:
@@ -33,10 +32,8 @@ class QueryPipeline:
             search_kwargs={"k": 10, "fetch_k": 30}          
         )
 
-        # 2. Setup Chain
-        # We will use the system prompt content but convert to LangChain Template
-        system_prompt_text = self.prompt_pipeline.get_system_prompt()
-
+        # 2. Retrieve context
+        context_docs = retriever.invoke(query)
         
         # 3. Setup Prompt
         system_prompt_text = self.prompt_pipeline.get_system_prompt()
@@ -46,7 +43,7 @@ class QueryPipeline:
             ("user", "{input}")
         ])
         
-        # 4. Format sources
+        # 4. Format sources for UI
         formatted_sources = []
         for doc in context_docs:
             formatted_sources.append({
@@ -54,14 +51,12 @@ class QueryPipeline:
                 "metadata": doc.metadata
             })
 
-        # Format context for both streaming and non-streaming
+        # 5. Format context for the LLM
         context_text = "\n\n".join([doc.page_content for doc in context_docs])
         messages = prompt.format_messages(context=context_text, input=query)
 
         if stream:
-            # For streaming
             return self.llm.stream(messages), formatted_sources
         else:
-            # For non-streaming
             answer = self.llm.invoke(messages)
             return answer.content, formatted_sources

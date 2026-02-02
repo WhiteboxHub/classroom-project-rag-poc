@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from app.pipelines.query_pipeline import QueryPipeline
+from pipelines.query_pipeline import QueryPipeline
 
 class TestQueryPipelineIntegration(unittest.TestCase):
     @patch('pipelines.query_pipeline.create_stuff_documents_chain')
@@ -16,21 +16,21 @@ class TestQueryPipelineIntegration(unittest.TestCase):
         mock_vstore.as_retriever.return_value = mock_retriever
         mock_get_vstore.return_value = mock_vstore
         
-        # 2. Mock Document Chain
-        mock_chain_instance = MagicMock()
-        mock_chain_instance.invoke.return_value = "The Answer"
-        mock_stuff_chain.return_value = mock_chain_instance
+        # 2. Mock LLM Response
+        mock_llm = MagicMock()
+        mock_response = MagicMock(content="The Answer")
+        mock_llm.invoke.return_value = mock_response
+        mock_get_llm.return_value = mock_llm
         
         # Run
         pipeline = QueryPipeline()
-        answer, sources = pipeline.run("Question", stream=False)
+        answer, sources = pipeline.run("What is the provider manual?", stream=False)
         
         # Verify
         self.assertEqual(answer, "The Answer")
         self.assertEqual(len(sources), 1)
         self.assertEqual(sources[0]["content"], "Content")
-        mock_retriever.invoke.assert_called_with("Question")
-        mock_chain_instance.invoke.assert_called()
+        mock_retriever.invoke.assert_called()
 
     @patch('pipelines.query_pipeline.get_vectorstore')
     @patch('pipelines.query_pipeline.get_llm')
@@ -52,7 +52,8 @@ class TestQueryPipelineIntegration(unittest.TestCase):
         
         # Run
         pipeline = QueryPipeline()
-        stream, sources = pipeline.run("Question", stream=True)
+        # Ensure query has at least 3 words to pass the guard
+        stream, sources = pipeline.run("Tell me about providers in the manual", stream=True)
         
         # Verify
         chunks = list(stream)

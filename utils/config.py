@@ -8,6 +8,8 @@ load_dotenv()
 class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "gpt-4o")
+    OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL")
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
     
     # Local Embeddings
     EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")

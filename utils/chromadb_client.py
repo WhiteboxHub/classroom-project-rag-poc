@@ -9,31 +9,39 @@ logger = setup_logger(__name__)
 
 USE_LOCAL_DB = os.getenv("USE_LOCAL_DB", "False").lower() == "true"
 
+_client = None
+
 def get_vectorstore():
+    global _client
     try:
+        embedding_function = get_embedding_function()
+        
+        # Disable telemetry in settings
+        settings = chromadb.config.Settings(anonymized_telemetry=False)
+        
         if USE_LOCAL_DB:
-            logger.info("Initializing Local ChromaDB (PersistentClient)...")
-            # Uses a local folder 'chroma_db_data' to store vector data
-            client = chromadb.PersistentClient(path="./chroma_db_data")
+            if _client is None:
+                logger.info("Initializing Local ChromaDB (PersistentClient)...")
+                _client = chromadb.PersistentClient(path="./chroma_db_data", settings=settings)
             
             vectorstore = Chroma(
-                client=client,
+                client=_client,
                 collection_name=Config.COLLECTION_NAME,
-                embedding_function=get_embedding_function(),
+                embedding_function=embedding_function,
             )
         else:
-            # HttpClient settings
-            client_settings = chromadb.config.Settings(
-                chroma_server_host=Config.CHROMADB_HOST,
-                chroma_server_http_port=Config.CHROMADB_PORT
-            )
-            
-            client = chromadb.HttpClient(host=Config.CHROMADB_HOST, port=Config.CHROMADB_PORT)
+            if _client is None:
+                logger.info(f"Initializing Remote ChromaDB (HttpClient) at {Config.CHROMADB_HOST}:{Config.CHROMADB_PORT}")
+                _client = chromadb.HttpClient(
+                    host=Config.CHROMADB_HOST, 
+                    port=Config.CHROMADB_PORT,
+                    settings=settings
+                )
             
             vectorstore = Chroma(
-                client=client,
+                client=_client,
                 collection_name=Config.COLLECTION_NAME,
-                embedding_function=get_embedding_function()
+                embedding_function=embedding_function
             )
         return vectorstore
     except Exception as e:

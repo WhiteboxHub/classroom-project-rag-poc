@@ -1,92 +1,102 @@
-# Classroom Project RAG POC
+# RAG System for Provider Manual
 
-A complete Retrieval-Augmented Generation (RAG) system for querying a Provider Manual, built with **LangChain**, **Streamlit**, **PostgreSQL**, and **ChromaDB**.
+A Retrieval-Augmented Generation (RAG) system that processes a healthcare provider manual PDF and provides an interactive chat interface for answering questions about the document.
 
-## 🚀 Quick Start
+## Features
 
-### Prerequisites
-- Docker & Docker Compose
-- OpenAI API Key
+- PDF document ingestion and text chunking
+- Vector embeddings for semantic search
+- Streamlit-based chat interface
+- Source citations with page references
+- Local ChromaDB vector storage
+- OpenAI GPT-4 integration
 
-### 1. Configuration
-Copy the example environment file:
-```bash
-cp env.example .env
-```
-Edit `.env` and set your `OPENAI_API_KEY`:
-```ini
-OPENAI_API_KEY=sk-your-key-here
-# Optional: Adjust embedding model or DB creds if needed
-```
+## Prerequisites
 
-### 2. Run with Docker (Recommended)
-Build and start the services:
-```bash
-docker-compose up --build
-```
-> This will start:
-> - **Postgres**: For chat history
-> - **ChromaDB**: For vector storage
-> - **Streamlit App**: The user interface
+- Python 3.11+
+- OpenAI API key
+- Docker (optional)
 
-The application will be available at [http://localhost:8501](http://localhost:8501).
+## Installation
 
----
-
-## 📂 Data Ingestion
-
-The system automatically checks for data ingestion on startup. 
-
-### Manual Ingestion
-If you need to re-ingest data or add new files while the container is running:
-
-1. Place your PDF file in `data/provider_manual.pdf`.
-2. Run the ingestion script inside the container:
+1. Clone the repository:
    ```bash
-   docker-compose exec app python scripts/run_ingestion.py
+   git clone <repository-url>
+   cd classroom-project-rag-poc
    ```
 
----
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## 🧪 Testing
+3. Set up environment variables:
+   ```bash
+   cp env.example .env
+   # Edit .env with your OpenAI API key
+   ```
 
-The repository includes a comprehensive test suite covering unit logic, integration flows, and quality evaluations.
+## Usage
 
-### Running Tests
-Run the tests inside the container to ensure connectivity to the database services:
+### Local Development
 
+1. Initialize the database:
+   ```bash
+   python -c "from db.models import init_db; init_db()"
+   ```
+
+2. Run document ingestion:
+   ```bash
+   python scripts/run_ingestion.py
+   ```
+
+3. Start the application:
+   ```bash
+   python -m streamlit run app/streamlit_app.py
+   ```
+
+4. Open your browser to `http://localhost:8501`
+
+### Docker
+
+1. Build and run with Docker Compose:
+   ```bash
+   docker compose up --build
+   ```
+
+2. Access the application at `http://localhost:8501`
+
+## Project Structure
+
+- `app/` - Streamlit application
+- `pipelines/` - Data processing pipelines
+- `utils/` - Utility modules
+- `db/` - Database models and schemas
+- `scripts/` - Setup and utility scripts
+- `tests/` - Unit and integration tests
+- `data/` - Document storage
+- `prompts/` - System prompts
+
+## Configuration
+
+Edit the `.env` file to configure:
+- OpenAI API key
+- Database settings
+- Chunking parameters
+- Embedding model
+
+## Testing
+
+Run tests with:
 ```bash
-docker-compose exec app pytest
+pytest tests/
 ```
 
-### Test Structure
-| Type | Path | Purpose |
-|------|------|---------|
-| **Unit** | `tests/unit/` | Tests individual components (LLM wrapper, Embedding wrapper) using mocks. |
-| **Integration** | `tests/integration/` | Tests complete pipelines (Ingestion, Query) ensuring components wire together correctly. |
-| **Evaluation** | `tests/eval/` | Quality checks for retrieving relevant context and generating faithful answers. |
+## Technologies
 
----
-
-## 🏗 Architecture
-
-### Tech Stack
-- **Framework**: [LangChain](https://www.langchain.com/) (Orchestration)
-- **Frontend**: [Streamlit](https://streamlit.io/)
-- **LLM**: OpenAI GPT-4o
-- **Embeddings**: SentenceTransformers (`all-MiniLM-L6-v2`) running via HuggingFace
-- **Vector Store**: [ChromaDB](https://www.trychroma.com/) (Client-Server mode)
-- **Database**: PostgreSQL (Session & Chat History)
-- **Infrastructure**: Docker Compose
-
-### Project Structure
-```
-├── app/                  # Streamlit frontend & state management
-├── db/                   # Database models & SQL schema
-├── pipelines/            # LangChain pipelines (Ingestion, Query)
-├── utils/                # Core utilities (LLM, Embeddings, Config)
-├── tests/                # Unit, Integration, and Eval tests
-├── docker/               # Dockerfile & Entrypoint scripts
-├── data/                 # Raw PDF data
-└── scripts/              # Standalone execution scripts
-```
+- LangChain
+- ChromaDB
+- SentenceTransformers
+- OpenAI GPT-4
+- Streamlit
+- SQLAlchemy

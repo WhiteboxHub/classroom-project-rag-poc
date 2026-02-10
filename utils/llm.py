@@ -6,11 +6,26 @@ logger = setup_logger(__name__)
 
 def get_llm():
     try:
-        llm = ChatOpenAI(
-            model=Config.OPENAI_MODEL_NAME,
-            temperature=0,
-            api_key=Config.OPENAI_API_KEY
-        )
+        model_name = Config.OPENAI_MODEL_NAME.lower()
+        
+        # Check if we should use Google Gemini
+        if "gemini" in model_name:
+            from langchain_google_genai import ChatGoogleGenerativeAI
+            logger.info(f"Initializing Google Gemini LLM: {Config.OPENAI_MODEL_NAME}")
+            llm = ChatGoogleGenerativeAI(
+                model=Config.OPENAI_MODEL_NAME,
+                google_api_key=Config.GOOGLE_API_KEY or Config.OPENAI_API_KEY,
+                temperature=0
+            )
+        else:
+            # Default to OpenAI compatible (Grok, Groq, OpenAI)
+            logger.info(f"Initializing OpenAI-compatible LLM: {Config.OPENAI_MODEL_NAME}")
+            llm = ChatOpenAI(
+                model=Config.OPENAI_MODEL_NAME,
+                temperature=0,
+                api_key=Config.OPENAI_API_KEY,
+                base_url=Config.OPENAI_BASE_URL
+            )
         return llm
     except Exception as e:
         logger.error(f"Failed to create LangChain LLM: {e}")
